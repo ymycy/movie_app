@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編輯電影 - {{ movie.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-container {
+            width: 50%;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #333333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #666666;
+        }
+        .btn-cancel {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <h1>編輯電影</h1>
+    <div class="form-container">
+        <!-- 設置 action 為電影詳細頁面的 URL -->
+        <form method="POST" action="{{ url_for('movie', movie_id=movie.id) }}">
+            標題: <input type="text" name="title" value="{{ movie.title }}" disabled><br>
+            導演: <input type="text" name="director" value="{{ movie.director }}" required><br>
+            演員: <input type="text" name="performer" value="{{ movie.performer }}" required>
+            類別:<input type="text" name="type" value="{{ movie.type }}" required>
+            簡介: <textarea name="introduction" required>{{ movie.introduction }}</textarea><br>
+            圖片:<input type="text" name="image_url" value="{{ movie.image_url }}">
+            <button type="submit" class="btn">儲存</button>
+        </form>
+        <a href="/" class="btn btn-cancel">取消</a>
+    </div>
+</body>
+</html>

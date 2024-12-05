@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .movie-detail {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            width: 300px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .btn {
+            padding: 10px 15px;
+            background-color: #333333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #666666;
+        }
+        .btn-back {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ movie.title }}</h1>
+    <img src="{{ movie.image_url or 'https://via.placeholder.com/300x450' }}" alt="{{ movie.title }}">
+    <p>導演: {{ movie.director }}</p>
+    <p>演員: {{ movie.performer }}</p>
+    <p>類別: {{ movie.type }}</p>
+    <p>簡介: {{ movie.introduction }}</p>
+
+    <a href="{{ url_for('index') }}">回到電影列表</a>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('edit_movie', movie_id=movie.id) }}">編輯電影</a>
+        <form action="{{ url_for('delete_movie', movie_id=movie.id) }}" method="post" style="display:inline;">
+            <input type="submit" value="刪除電影">
+        </form>
+    {% endif %}
+</body>
+</html>
