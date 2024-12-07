@@ -48,14 +48,21 @@
 <body>
     <h1>編輯電影</h1>
     <div class="form-container">
-        <!-- 設置 action 為電影詳細頁面的 URL -->
-        <form method="POST" action="{{ url_for('movie', movie_id=movie.id) }}">
-            標題: <input type="text" name="title" value="{{ movie.title }}" disabled><br>
+        <form method="POST" action="{{ url_for('edit_movie', movie_id=movie.id) }}" enctype="multipart/form-data">
+            標題: <input type="text" name="title" value="{{ movie.title }}" readonly><br>
             導演: <input type="text" name="director" value="{{ movie.director }}" required><br>
-            演員: <input type="text" name="performer" value="{{ movie.performer }}" required>
-            類別:<input type="text" name="type" value="{{ movie.type }}" required>
+            演員: <input type="text" name="performer" value="{{ movie.performer }}" required><br>
+            類別: <input type="text" name="type" value="{{ movie.type }}" required><br>
             簡介: <textarea name="introduction" required>{{ movie.introduction }}</textarea><br>
-            圖片:<input type="text" name="image_url" value="{{ movie.image_url }}">
+            
+            {% if movie.image_url %}
+                <div>
+                    <p>目前圖片:</p>
+                    <img src="{{ movie.image_url }}" alt="Movie Image" style="max-width: 100%; height: auto;">
+                </div>
+            {% endif %}
+
+            圖片: <input type="file" name="image_file"><br>
             <button type="submit" class="btn">儲存</button>
         </form>
         <a href="/" class="btn btn-cancel">取消</a>

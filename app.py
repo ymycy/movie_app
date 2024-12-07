@@ -1,7 +1,10 @@
+import os
+from werkzeug.utils import secure_filename
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from models import db, Movie
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///movies.db'
@@ -11,6 +14,15 @@ db = SQLAlchemy(app)
 api = Api(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+UPLOAD_FOLDER = 'static/uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 
 # 使用者模型
 class User(UserMixin, db.Model):
@@ -110,12 +122,22 @@ def edit_movie(movie_id):
         movie.performer = request.form['performer']
         movie.type = request.form['type']
         movie.introduction = request.form['introduction']
-        movie.image_url = request.form['image_url']
+
+        # 處理圖片檔案
+        if 'image_file' in request.files:
+            image_file = request.files['image_file']
+            if image_file and allowed_file(image_file.filename):
+                filename = secure_filename(image_file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                image_file.save(file_path)
+                movie.image_url = f"/{file_path}"
+
         db.session.commit()
         flash('電影資訊已更新！', 'success')
         return redirect(url_for('movie', movie_id=movie_id))
     
     return render_template('edit_movie.html', movie=movie)
+
 
 # 刪除電影
 @app.route('/delete_movie/<int:movie_id>', methods=['POST'])
@@ -127,7 +149,10 @@ def delete_movie(movie_id):
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+
     with app.app_context():
-        db.create_all()  # 在應用程式上下文中創建資料庫
+        db.create_all()
     app.run(debug=True)
 
